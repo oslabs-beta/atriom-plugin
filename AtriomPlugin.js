@@ -183,14 +183,25 @@ class AtriomPlugin {
       if (graphData) {
         const dashData = (this._dashData = JSON.stringify(graphData));
 
-        // if (this._options.filename) {
-        //   const hashPath = path.join(stats.outputPath, this._options.filename);
-        //   fs.writeFile(hashPath, dashData, { encoding: 'utf-8' }, () => {});
-        // }
-        const filePathAtriom = path.join(
+        // Use user-specified filename or ATRIOM by default
+        const filename = `${this._options.filename || 'ATRIOM'}.dat`;
+
+        // Set up default output path
+        let filePathAtriom = path.join(
           __dirname,
-          `../../dashboard-data/${this._options.filename}.dat`
+          `../../ATRIOM-data/${filename}`
         );
+
+        // Write to user-specified path or warn user that a path has not been provided
+        if (this._options.outputPath) {
+          filePathAtriom = `${this._options.outputPath}/${this._options.filename}.dat`;
+          console.log('ATRIOM: Writing to...', filePathAtriom);
+        } else {
+          console.warn(
+            'WARNING: No output path provided in options. Writing to....',
+            filePathAtriom
+          );
+        }
 
         fs.appendFile(
           filePathAtriom,
