@@ -1,7 +1,7 @@
-const fs = require("fs");
-const path = require("path");
-const AutomaticVendorFederation = require("@module-federation/automatic-vendor-federation");
-const convertToGraph = require("./convertToGraph");
+const fs = require('fs');
+const path = require('path');
+const AutomaticVendorFederation = require('@module-federation/automatic-vendor-federation');
+const convertToGraph = require('./convertToGraph');
 
 /** @typedef {import('webpack/lib/Compilation')} Compilation */
 /** @typedef {import('webpack/lib/Compiler')} Compiler */
@@ -12,7 +12,7 @@ const convertToGraph = require("./convertToGraph");
  * @property {function} reportFunction
  */
 
-const PLUGIN_NAME = "AtriomPlugin";
+const PLUGIN_NAME = 'AtriomPlugin';
 
 class AtriomPlugin {
   /**
@@ -29,7 +29,7 @@ class AtriomPlugin {
    */
   apply(compiler) {
     const FederationPlugin = compiler.options.plugins.find((plugin) => {
-      return plugin.constructor.name === "ModuleFederationPlugin";
+      return plugin.constructor.name === 'ModuleFederationPlugin';
     });
     // FederAtionPluginOptions stores options object passed into the FEDERATION PLUGIN (NOT dashboard plugin)
     let FederationPluginOptions;
@@ -44,13 +44,13 @@ class AtriomPlugin {
       const modules = stats.modules.filter((module) => {
         const array = [
           //container entry - local modules??? This references SearchContent.jsx in search app
-          module.name.includes("container entry"),
+          module.name.includes('container entry'),
           // remote - modules brought in from other apps
-          module.name.includes("remote "),
+          module.name.includes('remote '),
           // shared - shared dependencies (react, redux, etc.)
-          module.name.includes("shared module "),
+          module.name.includes('shared module '),
           // unsure - none in search app
-          module.name.includes("provide module "),
+          module.name.includes('provide module '),
         ];
         return array.some((item) => item);
       });
@@ -63,7 +63,7 @@ class AtriomPlugin {
                 // grab user required package.json
                 // grab all package.json files!!??
                 const subsetPackage = require(reason.userRequest +
-                  "/package.json");
+                  '/package.json');
                 directReasons.add(subsetPackage);
               } catch (e) {}
             }
@@ -117,7 +117,7 @@ class AtriomPlugin {
         const stringifiableChunk = Array.from(subset).map((sub) => {
           const cleanSet = Object.getOwnPropertyNames(sub).reduce(
             (acc, key) => {
-              if (key === "_groups") return acc;
+              if (key === '_groups') return acc;
               return Object.assign(acc, { [key]: sub[key] });
             },
             {}
@@ -132,7 +132,7 @@ class AtriomPlugin {
         vendorFederation = {};
       try {
         packageJson = require(liveStats.compilation.options.context +
-          "/package.json");
+          '/package.json');
       } catch (e) {}
       if (packageJson) {
         vendorFederation.dependencies = AutomaticVendorFederation({
@@ -140,7 +140,7 @@ class AtriomPlugin {
           ignoreVersion: false,
           packageJson,
           subPackages: Array.from(directReasons),
-          shareFrom: ["dependencies"],
+          shareFrom: ['dependencies'],
           ignorePatchVersion: true,
         });
         vendorFederation.devDependencies = AutomaticVendorFederation({
@@ -148,7 +148,7 @@ class AtriomPlugin {
           ignoreVersion: false,
           packageJson,
           subPackages: Array.from(directReasons),
-          shareFrom: ["devDependencies"],
+          shareFrom: ['devDependencies'],
           ignorePatchVersion: true,
         });
         vendorFederation.optionalDependencies = AutomaticVendorFederation({
@@ -156,7 +156,7 @@ class AtriomPlugin {
           ignoreVersion: false,
           packageJson,
           subPackages: Array.from(directReasons),
-          shareFrom: ["optionalDependencies"],
+          shareFrom: ['optionalDependencies'],
           ignorePatchVersion: true,
         });
       }
@@ -176,7 +176,7 @@ class AtriomPlugin {
       try {
         graphData = convertToGraph(rawData);
       } catch (err) {
-        console.warn("Error during dashboard data processing");
+        console.warn('Error during dashboard data processing');
         console.warn(err);
       }
 
@@ -185,26 +185,26 @@ class AtriomPlugin {
 
         if (this._options.filename) {
           const hashPath = path.join(stats.outputPath, this._options.filename);
-          fs.writeFile(hashPath, dashData, { encoding: "utf-8" }, () => {});
+          fs.writeFile(hashPath, dashData, { encoding: 'utf-8' }, () => {});
         }
 
         const filePathAtriom = path.join(
           __dirname,
-          "../../dashboard-data/ATRIOM.dat"
+          '../../dashboard-data/ATRIOM.dat'
         );
 
         fs.appendFile(
           filePathAtriom,
-          dashData + ",",
-          { encoding: "utf-8" },
+          dashData + ',',
+          { encoding: 'utf-8' },
           () => {}
         );
 
-        const statsPath = path.join(stats.outputPath, "stats.json");
+        const statsPath = path.join(stats.outputPath, 'stats.json');
         fs.writeFile(
           statsPath,
           JSON.stringify(stats),
-          { encoding: "utf-8" },
+          { encoding: 'utf-8' },
           () => {}
         );
       }
