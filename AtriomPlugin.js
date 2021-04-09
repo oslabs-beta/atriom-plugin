@@ -183,14 +183,13 @@ class AtriomPlugin {
       if (graphData) {
         const dashData = (this._dashData = JSON.stringify(graphData));
 
-        if (this._options.filename) {
-          const hashPath = path.join(stats.outputPath, this._options.filename);
-          fs.writeFile(hashPath, dashData, { encoding: 'utf-8' }, () => {});
-        }
-
+        // if (this._options.filename) {
+        //   const hashPath = path.join(stats.outputPath, this._options.filename);
+        //   fs.writeFile(hashPath, dashData, { encoding: 'utf-8' }, () => {});
+        // }
         const filePathAtriom = path.join(
           __dirname,
-          '../../dashboard-data/ATRIOM.dat'
+          `../../dashboard-data/${this._options.filename}.dat`
         );
 
         fs.appendFile(
