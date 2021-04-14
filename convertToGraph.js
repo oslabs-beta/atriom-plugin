@@ -1,4 +1,4 @@
-const { validateParams } = require("./helpers");
+const { validateParams } = require('./helpers');
 const convertToGraph = ({
   name,
   federationRemoteEntry,
@@ -15,13 +15,13 @@ const convertToGraph = ({
   const modulesObj = {};
 
   modules.forEach(({ identifier, reasons }) => {
-    const data = identifier.split(" ");
-    if (data[0] === "remote") {
+    const data = identifier.split(' ');
+    if (data[0] === 'remote') {
       if (data.length === 4) {
-        const name = data[3].replace("./", "");
+        const name = data[3].replace('./', '');
         const consume = {
           consumingApplicationID: app,
-          applicationID: data[2].replace("webpack/container/reference/", ""),
+          applicationID: data[2].replace('webpack/container/reference/', ''),
           name,
           usedIn: new Set(),
         };
@@ -32,14 +32,14 @@ const convertToGraph = ({
         reasons.forEach(({ userRequest, resolvedModule, type }) => {
           if (consumesByName[userRequest]) {
             consumesByName[userRequest].usedIn.add(
-              resolvedModule.replace("./", "")
+              resolvedModule.replace('./', '')
             );
           }
         });
       }
-    } else if (data[0] === "container" && data[1] === "entry") {
+    } else if (data[0] === 'container' && data[1] === 'entry') {
       JSON.parse(data[3]).forEach(([prefixedName, file]) => {
-        const name = prefixedName.replace("./", "");
+        const name = prefixedName.replace('./', '');
         modulesObj[file.import[0]] = {
           id: `${app}:${name}`,
           name,
@@ -54,7 +54,7 @@ const convertToGraph = ({
   const convertDeps = (deps = {}) =>
     Object.entries(deps).map(([version, name]) => ({
       name,
-      version: version.replace(`${name}-`, ""),
+      version: version.replace(`${name}-`, ''),
     }));
   const convertedDeps = {
     dependencies: convertDeps(topLevelPackage.dependencies),
@@ -63,25 +63,25 @@ const convertToGraph = ({
   };
 
   modules.forEach(({ identifier, issuerName, reasons }) => {
-    const data = identifier.split("|");
+    const data = identifier.split('|');
 
-    if (data[0] === "consume-shared-module") {
+    if (data[0] === 'consume-shared-module') {
       if (issuerName) {
         // This is a hack
-        const issuerNameMinusExtension = issuerName.replace(".js", "");
+        const issuerNameMinusExtension = issuerName.replace('.js', '');
         if (modulesObj[issuerNameMinusExtension]) {
           modulesObj[issuerNameMinusExtension].requires.add(data[2]);
         }
       }
       if (reasons) {
         reasons.forEach(({ module }) => {
-          const moduleMinusExtension = module.replace(".js", "");
+          const moduleMinusExtension = module.replace('.js', '');
           if (modulesObj[moduleMinusExtension]) {
             modulesObj[moduleMinusExtension].requires.add(data[2]);
           }
         });
       }
-      let version = "";
+      let version = '';
       [
         convertedDeps.dependencies,
         convertedDeps.devDependencies,
@@ -103,8 +103,8 @@ const convertToGraph = ({
     }
   });
 
-  const sourceUrl = metadata && metadata.source ? metadata.source.url : "";
-  const remote = metadata && metadata.remote ? metadata.remote : "";
+  const sourceUrl = metadata && metadata.source ? metadata.source.url : '';
+  const remote = metadata && metadata.remote ? metadata.remote : '';
 
   const out = {
     ...convertedDeps,
