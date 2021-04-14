@@ -5,7 +5,7 @@
 ### Introduction
 
 The Atriom webpack plugin extracts data from the webpack build process and writes a `.dat` file to a user-specified output path. This plugin is intended for use with applications built with the Webpack 5 `ModuleFederationPlugin`.
-The `.dat` file contains the following information:
+The generated `.dat` file will contain the following information:
 
 - name and id of the application
 - application dependencies
@@ -31,8 +31,6 @@ Add Atriom plugin and configuration to your `webpack.config.js` file.
 ### Example
 
 `const AtriomPlugin = require('atriom-plugin');`
-
-...
 
 ```
 plugins: [
