@@ -1,5 +1,4 @@
 const fs = require('fs');
-const path = require('path');
 const AutomaticVendorFederation = require('@module-federation/automatic-vendor-federation');
 const convertToGraph = require('./convertToGraph');
 
@@ -31,25 +30,26 @@ class AtriomPlugin {
     const FederationPlugin = compiler.options.plugins.find((plugin) => {
       return plugin.constructor.name === 'ModuleFederationPlugin';
     });
-    // FederAtionPluginOptions stores options object passed into the FEDERATION PLUGIN (NOT dashboard plugin)
     let FederationPluginOptions;
     if (FederationPlugin) {
       FederationPluginOptions = FederationPlugin._options;
     }
 
     compiler.hooks.afterDone.tap(PLUGIN_NAME, (liveStats) => {
+      if (!this._options.outputPath) {
+        console.warn('ATRIOM WARNING: No output path provided in options.');
+        process.exit(1);
+      }
       const stats = liveStats.toJson();
 
-      // store in |modules| an array of module objects that are relevant
+      // find relevant module objects
       const modules = stats.modules.filter((module) => {
         const array = [
-          //container entry - local modules??? This references SearchContent.jsx in search app
           module.name.includes('container entry'),
-          // remote - modules brought in from other apps
+          // modules brought in from other apps
           module.name.includes('remote '),
-          // shared - shared dependencies (react, redux, etc.)
+          // shared dependencies (react, redux, etc.)
           module.name.includes('shared module '),
-          // unsure - none in search app
           module.name.includes('provide module '),
         ];
         return array.some((item) => item);
@@ -61,7 +61,6 @@ class AtriomPlugin {
             if (reason.userRequest) {
               try {
                 // grab user required package.json
-                // grab all package.json files!!??
                 const subsetPackage = require(reason.userRequest +
                   '/package.json');
                 directReasons.add(subsetPackage);
@@ -78,13 +77,14 @@ class AtriomPlugin {
         });
         return specificChunk;
       });
-      // use liveStats.compilation.namedChunks (JS Map!!!)
-      // get chunk that is associated with the current application (getting this by using the chunk associated with FederationPluginOptions.name, which stores the current app name (as provided in the webpack config as options to the ModuleFederationPlugin))
+      // use liveStats.compilation.namedChunks (JS Map Object)
+      // get chunk that is associated with the current application
+      // getting this by using the chunk associated with FederationPluginOptions.name provided in webpack config
       const namedChunkRefs = liveStats.compilation.namedChunks.get(
         FederationPluginOptions.name
       );
 
-      // AllReferencedChunksByRemote is a Set (or array if namedChunkRefs is falsey) -- see ModuleFederationDashboardNotes.js for obj structure
+      // AllReferencedChunksByRemote is a Set (or array if namedChunkRefs is falsey)
       const AllReferencedChunksByRemote = namedChunkRefs
         ? namedChunkRefs.getAllReferencedChunks()
         : [];
@@ -96,7 +96,7 @@ class AtriomPlugin {
           validChunkArray.push(chunk);
         }
       });
-      // validChunkArray is now an array of chunk objects (in this case, identical to the AllReferencedChunksByRemote Set???) - why are we making a validChunkArray?
+      // validChunkArray is now an array of chunk objects (in this case, identical to the AllReferencedChunksByRemote Set)
 
       function mapToObjectRec(m) {
         let lo = {};
@@ -183,37 +183,15 @@ class AtriomPlugin {
       if (graphData) {
         const dashData = (this._dashData = JSON.stringify(graphData));
 
-        // Use user-specified filename or ATRIOM by default
-        const filename = `${this._options.filename || 'ATRIOM'}.dat`;
-
-        // Set up default output path
-        let filePathAtriom = path.join(
-          __dirname,
-          `../../ATRIOM-data/${filename}`
-        );
-
-        // Write to user-specified path or warn user that a path has not been provided
-        if (this._options.outputPath) {
-          filePathAtriom = `${this._options.outputPath}/${this._options.filename}.dat`;
-          console.log('ATRIOM: Writing to...', filePathAtriom);
-        } else {
-          console.warn(
-            'WARNING: No output path provided in options. Writing to....',
-            filePathAtriom
-          );
-        }
-
+        // Write to user-specified path
+        // Filename will be user-specified or 'ATRIOM'
+        const filePathAtriom = `${this._options.outputPath}/${
+          this._options.filename || 'ATRIOM'
+        }.dat`;
+        console.log('ATRIOM: Writing to...', filePathAtriom);
         fs.appendFile(
           filePathAtriom,
           dashData + ',',
-          { encoding: 'utf-8' },
-          () => {}
-        );
-
-        const statsPath = path.join(stats.outputPath, 'stats.json');
-        fs.writeFile(
-          statsPath,
-          JSON.stringify(stats),
           { encoding: 'utf-8' },
           () => {}
         );
