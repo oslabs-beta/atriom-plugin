@@ -56,7 +56,7 @@ plugins: [
 
 \*\*The `outputPath` for each federated application must point to the same location.  
     
-    
+    \n
 Once the plugin has been added and configured correctly, simply run your build script for each federated application:
 
 `webpack --mode production`
