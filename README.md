@@ -46,7 +46,6 @@ plugins: [
 ]
 ```
 \
-\
 | Key | Description |
 | ------------ | ------------------------------------------------------- |
 | `filename` | Name of the output file\* |
