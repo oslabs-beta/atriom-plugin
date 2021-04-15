@@ -60,4 +60,4 @@ Once the plugin has been added and configured correctly, simply run your build s
 `webpack --mode production`
 \
 \
-The Atriom plugin will generate a .dat file at the specified location, which is ready to be used with the [Atriom Dashboard](http://www.atriomdashboard.io).
+The Atriom plugin will generate a `.dat` file at the specified location, which is ready to be used with the [Atriom Dashboard](http://www.atriomdashboard.io).
