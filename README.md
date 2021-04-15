@@ -44,7 +44,7 @@ plugins: [
     }),
     ...
 ]
-```  
+```
 \
 \
 | Key | Description |
