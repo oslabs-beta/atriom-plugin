@@ -45,8 +45,8 @@ plugins: [
     ...
 ]
 ```  
-
-
+    
+    
 | Key | Description |
 | ------------ | ------------------------------------------------------- |
 | `filename` | Name of the output file\* |
@@ -55,8 +55,8 @@ plugins: [
 \*The `fileName` in each federated application's `webpack.config.js` file must be identical.
 
 \*\*The `outputPath` for each federated application must point to the same location.  
-
-
+    
+    
 Once the plugin has been added and configured correctly, simply run your build script for each federated application:
 
 `webpack --mode production`
