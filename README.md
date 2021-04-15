@@ -1,5 +1,4 @@
-![Atriom logo]
-(/images/atriom-logo.png)
+![Atriom logo](/images/atriom-logo.png)
 
 ## Getting Started
 
