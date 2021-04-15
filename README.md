@@ -45,8 +45,8 @@ plugins: [
     ...
 ]
 ```  
-    
-    
+\
+\   
 | Key | Description |
 | ------------ | ------------------------------------------------------- |
 | `filename` | Name of the output file\* |
@@ -60,7 +60,6 @@ plugins: [
 Once the plugin has been added and configured correctly, simply run your build script for each federated application:
 
 `webpack --mode production`
-
-The Atriom plugin will generate a .dat file at the specified location, which is ready to be used with the Atriom web application:
-
-http://www.atriomdashboard.io
+\
+\
+The Atriom plugin will generate a .dat file at the specified location, which is ready to be used with the [Atriom Dashboard](http://www.atriomdashboard.io).
